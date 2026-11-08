@@ -1,0 +1,78 @@
+{
+  "run_id": "run-002",
+  "hypothesis_id": "v2",
+  "threshold": 80.0,
+  "window": {
+    "window_start": "2020-02-26",
+    "window_end": "2026-08-12"
+  },
+  "rule": "收益/回撤/夏普 同快照同口径对照买入持有基线；交易次数与阈值稳健性为绝对/相对标准",
+  "acceptance": {
+    "criteria": {
+      "annual_return": {
+        "actual": 0.125534,
+        "threshold": 0.109375,
+        "ok": true
+      },
+      "max_drawdown": {
+        "actual": -0.138702,
+        "limit": -0.097091,
+        "ok": false
+      },
+      "sharpe": {
+        "actual": 1.005,
+        "threshold": 0.9676,
+        "ok": true
+      },
+      "n_trades": {
+        "actual": 19,
+        "min": 10,
+        "ok": true
+      }
+    },
+    "main_ok": false,
+    "robustness": {
+      "ok": true,
+      "note": "退化稳健：全部阈值同判 FAIL，'不反转'无信息量",
+      "per_threshold": {
+        "75.0": {
+          "annual": 0.095644,
+          "mdd": -0.138702,
+          "sharpe": 0.8223,
+          "n_trades": 23,
+          "all_ok": false
+        },
+        "77.5": {
+          "annual": 0.11698,
+          "mdd": -0.138702,
+          "sharpe": 0.955,
+          "n_trades": 31,
+          "all_ok": false
+        },
+        "80.0": {
+          "annual": 0.125534,
+          "mdd": -0.138702,
+          "sharpe": 1.005,
+          "n_trades": 19,
+          "all_ok": false
+        },
+        "82.5": {
+          "annual": 0.117911,
+          "mdd": -0.138702,
+          "sharpe": 0.9475,
+          "n_trades": 11,
+          "all_ok": false
+        },
+        "85.0": {
+          "annual": 0.122123,
+          "mdd": -0.138702,
+          "sharpe": 0.9708,
+          "n_trades": 11,
+          "all_ok": false
+        }
+      }
+    },
+    "overall_pass": false
+  },
+  "verdict": "FAIL"
+}
