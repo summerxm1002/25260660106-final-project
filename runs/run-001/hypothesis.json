@@ -1,0 +1,21 @@
+{
+  "hypothesis_id": "v1",
+  "version": "v1",
+  "parent_run": null,
+  "rule": {
+    "type": "single_threshold",
+    "threshold": 85.0,
+    "exec_lag_days": 1,
+    "cold_position": "full",
+    "hot_position": "cash",
+    "enter_at_start": true
+  },
+  "cost": {
+    "commission_bps": 3,
+    "min_yuan": 0,
+    "stamp_tax_bps": 0,
+    "slippage_bps": 0
+  },
+  "capital": 1000000,
+  "rationale": "task.md §2/§6 主假设 v1：单阈值二元择时。温度计 >85 清仓、≤85 满仓，t 日收盘判定、t+1 收盘执行，起点 ≤85 立即满仓。验收未达预案顺序：85→80→确认延迟→结构变更。"
+}
