@@ -1,0 +1,21 @@
+{
+  "hypothesis_id": "v2",
+  "version": "v2",
+  "parent_run": "run-001",
+  "rule": {
+    "type": "single_threshold",
+    "threshold": 80.0,
+    "exec_lag_days": 1,
+    "cold_position": "full",
+    "hot_position": "cash",
+    "enter_at_start": true
+  },
+  "cost": {
+    "commission_bps": 3,
+    "min_yuan": 0,
+    "stamp_tax_bps": 0,
+    "slippage_bps": 0
+  },
+  "capital": 1000000,
+  "rationale": "task.md 预案①：阈值 85→80（参数修订，免 H1）。动机（引用 runs/run-001/review/critic_verdict.md §5）：(a) 改善交易次数余量（11→预期约19）与年化，消除 run-001 第3/4条临界侥幸；(b) 实证检验降阈值能否改善回撤——Critic 预判不能（2022 慢熊各阈值均满仓穿越），若应验则为 v3 结构变更（温度计逃顶+趋势过滤防熊，触发 H1）提供实证依据。"
+}
