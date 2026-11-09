@@ -88,3 +88,16 @@ fig.savefig('docs/figures/fig3_temp_trades.png', facecolor='white')
 plt.close(fig)
 
 print('saved docs/figures/fig1_equity.png fig2_drawdown.png fig3_temp_trades.png')
+
+# ── fig0 侧栏小图（A4 备忘右侧栏 ~6.2cm 宽专用）────────────
+plt.rcParams.update({'font.size': 7.5, 'axes.titlesize': 8.5, 'axes.labelsize': 7.5,
+                     'xtick.labelsize': 7, 'ytick.labelsize': 7, 'lines.linewidth': 1.3})
+fig, ax = plt.subplots(figsize=(3.4, 2.5), constrained_layout=True)
+ax.plot(eq['date'], eq['strategy_equity'], color=C_STRAT, label='v2 策略')
+ax.plot(eq['date'], eq['baseline_equity'], color=C_BASE, label='买入持有', lw=1.1)
+ax.set_ylabel('净值（起点 = 1）')
+ax.set_title('v2 策略 vs 买入持有')
+ax.legend(fontsize=7, loc='upper left')
+fig.savefig('docs/figures/fig0_mini_equity.png', facecolor='white')
+plt.close(fig)
+print('saved docs/figures/fig0_mini_equity.png')

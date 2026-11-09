@@ -24,12 +24,48 @@
 
 ## 环境配置与运行说明
 
-（文档完善中，项目收尾时补全）
+**环境**：Python 3.13（Anaconda）；依赖 pandas、numpy、akshare、openpyxl、
+matplotlib、pytest；报告编译需 TeX Live（xelatex + fandol 中文字体）。
+
+```bash
+# 安装依赖（akshare 体积大，国内建议清华镜像）
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple akshare pandas numpy openpyxl matplotlib pytest
+
+# 单元测试（33 项）
+python -m pytest tests/ -q
+
+# 阶段②取数与校验（需联网；快照与 manifest 落 runs/<run>/data/）
+python -m src.workflow.fetch --run-dir runs/run-001
+
+# 阶段③回测执行（含阈值 ±5 敏感性；产物落 runs/<run>/result/）
+python -m src.workflow.backtest --run-dir runs/run-002
+
+# 阶段④自动评审（确定性门禁；产物落 runs/<run>/review/auto_review.json）
+python -m src.workflow.review --run-dir runs/run-002
+
+# 终局图与报告表格重生成
+python scripts/make_final_figures.py && python scripts/make_report_tables.py
+
+# 报告编译（latex 技能 helper，在仓库根目录执行）
+python <latex-skill-dir>/scripts/compile_pdf.py docs/final_report/main.tex --engine xelatex
+```
 
 ## 文件清单
 
-（文档完善中，项目收尾时补全）
+| 路径 | 内容 |
+|---|---|
+| `docs/plans/task.md` | 任务定义（策略规则、回测设定、验收标准、修订预案） |
+| `docs/DESIGN.md` | 架构设计（角色与交接、状态库、核验与改进机制） |
+| `docs/workflow.png` | 带注释的工作流图（角色、产物、门禁/人工批准节点） |
+| `docs/iteration_log.md` | 迭代日志（run-001~003 逐轮记录 + 终局裁决） |
+| `docs/figures/` | 终局报告图（fig0 侧栏小图 ~ fig3 温度计与交易点） |
+| `docs/final_report/` | 最终 A4 研究备忘（main.tex + sections/ + tables/ + main.pdf） |
+| `data/raw/` | 原始信号数据（红利低波50ETF择时信号.xlsx，只读） |
+| `src/workflow/` | 工作流实现：fetch（取数校验）/ backtest（回测）/ review（评审门禁） |
+| `tests/` | 单元测试 33 项（校验逻辑、回测时序、验收判定） |
+| `runs/` | run 状态库：run-001~003（假设快照、数据快照哈希、指标、敏感性、裁决）+ champion.json |
+| `scripts/` | 工作流图、终局图与报告表格生成脚本 |
 
 ## 本人贡献声明
 
-（文档完善中，项目收尾时补全）
+（待补：由本人口述后填写）

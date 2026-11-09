@@ -3,3 +3,9 @@ __pycache__/
 .pytest_cache/
 runs/*/tmp/
 output/
+*.aux
+*.log
+*.xdv
+*.out
+*.fdb_latexmk
+*.fls

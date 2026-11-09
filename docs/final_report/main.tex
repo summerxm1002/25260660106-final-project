@@ -1,0 +1,125 @@
+% 期末作业终局研究备忘：红利低波50ETF 温度计择时策略回测与迭代研究
+% 基于 latex 技能 A4 模板（\ChineseMemotrue，xelatex 编译）
+\documentclass[a4paper,10pt]{article}
+\usepackage[margin=18mm,footskip=9mm]{geometry}
+\usepackage{iftex}
+\newif\ifChineseMemo
+\ChineseMemotrue
+\ifChineseMemo
+  \ifPDFTeX
+    \PackageError{finance-memo}{Chinese text requires XeLaTeX or LuaLaTeX}{}
+  \else
+    \usepackage[UTF8,fontset=fandol]{ctex}
+    \renewcommand{\familydefault}{\sfdefault}
+  \fi
+\fi
+\usepackage{booktabs,graphicx,xcolor,caption,xurl,fancyhdr}
+\definecolor{MemoBlue}{HTML}{203E70}
+\definecolor{MemoRule}{HTML}{B9C8DF}
+\usepackage[colorlinks=true,linkcolor=MemoBlue,urlcolor=MemoBlue]{hyperref}
+\captionsetup{font=small,labelfont=bf,skip=4pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0.3pt}
+
+\newcommand{\ReportTitle}{红利低波50ETF温度计择时策略：回测与三轮迭代研究}
+\newcommand{\ReportType}{研究备忘 · 期末作业}
+\newcommand{\ReportDate}{2026 年 11 月 9 日}
+\newcommand{\DataDate}{2026 年 8 月 12 日}
+\newcommand{\ReportScope}{波段择时策略研究：提出假设→取数→回测→评审→修订→再回测；\\ 窗口 2020-02-26 \textasciitilde{} 2026-08-12，对照买入持有基线}
+\newcommand{\TeamName}{邢敏}
+\newcommand{\DeskName}{金融人工智能编程 2026 秋\\学号 25260660106}
+\newcommand{\ReportAuthor}{邢敏（25 级 FMBA）}
+\newcommand{\Coverage}{红利低波50ETF（sh515450）}
+\newcommand{\KeyFinding}{最终假设 v2（温度计阈值 80 二元择时）5 条验收标准中 4 条达标，第 2 条（最大回撤）未达标——按验收规则判定未通过，如实呈现。三轮迭代各产出一条被数据证实或证伪的设计知识。}
+\fancyfoot[L]{\scriptsize\TeamName}
+\fancyfoot[R]{\scriptsize\ReportType}
+
+\begin{document}
+\begin{minipage}[t]{0.70\textwidth}
+\vspace{0pt}
+{\small\ReportDate}\par\medskip
+{\color{MemoBlue}\hrule height 0.5pt}\smallskip
+{\large\ReportType}\par
+{\LARGE\bfseries\ReportTitle}\par\medskip
+\ReportScope
+\end{minipage}\hfill
+\begin{minipage}[t]{0.23\textwidth}
+\vspace{0pt}\raggedleft
+\colorbox{MemoBlue}{\parbox[c][19mm][c]{0.86\linewidth}{\centering\color{white}\bfseries\TeamName}}\par\medskip
+\DeskName
+\end{minipage}
+\par\bigskip
+{\color{MemoBlue}\hrule height 0.5pt}\medskip
+{\large\KeyFinding}\par\bigskip
+
+\begin{minipage}[t]{0.61\textwidth}
+\vspace{0pt}\raggedright\small
+\setlength{\parskip}{4pt}
+\textbf{问题与工作流}\par
+为周期性重复的策略研究任务设计端到端长程智能体工作流并全程执行：提出假设
+→取数→回测→评审→修订→再回测。Controller（确定性状态机）调度；Generator
+/Critic（LLM）分别只提假设、只读评审；取数、回测、指标与验收判定均为确定性
+代码；人工门禁 H1/H2 把守结构变更与终局。每轮迭代为一个 run：假设、数据
+快照哈希、指标、裁决全落盘，可复现可回滚（见 DESIGN.md）。
+
+\textbf{数据与口径}\par
+信号：自制温度计（估值+热度+拥挤度，日度，截至 2026-08-12）；行情：
+akshare/东方财富后复权日线，上市日 2020-02-26 自动确认（新浪源交叉一致）。
+窗口取交集并按信号末日裁切（as\_of 纪律），1566 个交易日；成本：单边万 3
+双边、免最低 5 元、无印花税、无滑点；夏普 rf=0、日频年化。
+
+\textbf{发现（事实）}\par
+v2 规则：温度 $>$80 清仓、$\leq$80 满仓，t 日判定、t+1 收盘执行，二元仓位。
+19 笔卖出全部落在温度尖峰（2020-07、2021-02、2023-05、2024-09-30），四次逃顶
+贡献超额：年化 12.55\% 对基线 10.42\%，夏普 1.005 对 0.806。2022-02
+\textasciitilde{} 10 慢熊回撤 -13.87\% 与基线完全相同，未达"$\leq$基线
+$\times$0.7"的验收线——该区间温度计最高仅 61.1，全程未触发清仓。
+
+\textbf{解读（判断）}\par
+温度计为逆向逃顶指标，其热度/拥挤度维度在阴跌市中自然冷却，对慢熊无预警；
+三轮迭代证明这是指标能力边界的结构性问题（调参无解、趋势过滤反害），
+非某组参数的偶然失手。
+
+\textbf{风险与局限}\par
+单窗口样本内评估；无滑点与成本简化或高估收益；温度计为自制指标；完整
+清单与诚实结论见第 2 页末。
+\end{minipage}\hfill
+\begin{minipage}[t]{0.36\textwidth}
+\vspace{0pt}\small
+\input{sections/sidebar.tex}
+\end{minipage}
+\par\vfill
+
+{\color{MemoRule}\hrule height 0.4pt}\medskip
+\begin{minipage}[t]{0.36\textwidth}
+\vspace{0pt}\small
+\setlength{\parskip}{3pt}
+\textbf{PREPARED BY}\par\ReportAuthor\par\TeamName\par
+\medskip\textbf{COVERAGE}\par\Coverage
+\end{minipage}\hfill
+\begin{minipage}[t]{0.60\textwidth}
+\vspace{0pt}\footnotesize
+\setlength{\parskip}{3pt}
+\textbf{来源与日期。}数据截至 \DataDate。
+信号：data/raw/红利低波50ETF择时信号.xlsx（本人自制，截至 2026-08-12）；
+行情：akshare fund\_etf\_hist\_em（东方财富，2026-11-09 抓取，后复权）；
+回测输入为 run-002 数据快照（snapshot\_manifest.json 含 SHA-256 与 as\_of）。
+
+\textbf{核验。}33 项单元测试通过；回测前快照哈希复核一致；交易与信号序列对账
+一致（抽查 2024-09-27 温度 87.05 \textgreater{} 80，09-30 执行卖出）；报告数值
+与 runs/run-002/result/metrics.json 一致。未竟核验：无样本外验证。
+
+\textbf{编制说明。}回测、指标、门禁均为确定性 Python 代码（src/workflow/）；
+Kimi Code（LLM 智能体）承担 Generator/Critic 角色、编码与文档整理；规则结构
+变更经 H1、终局定稿经 H2 人工裁决；全部数值由代码计算，LLM 无写权限于产物。
+\end{minipage}
+
+\clearpage
+\normalsize
+\input{sections/body.tex}
+
+\end{document}
