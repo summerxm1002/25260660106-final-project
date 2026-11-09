@@ -1,0 +1,28 @@
+{
+  "run_id": "run-001",
+  "created_at": "2026-11-09T00:03:24",
+  "files": {
+    "signal.csv": {
+      "sha256": "6fe9283b0d76551ab19033058c2baf44269c8ec0e72c23cf64b9f47cc91d8eef",
+      "rows": 2087
+    },
+    "price_hfq.csv": {
+      "sha256": "8e2e30f0ca635ce8b4518344b0feed65ffd2717ec860f9caec25138e56089758",
+      "rows": 1625
+    }
+  },
+  "as_of": {
+    "signal_start": "2018-01-02",
+    "signal_end": "2026-08-12",
+    "price_start": "2020-02-26",
+    "price_end": "2026-11-06",
+    "window_start": "2020-02-26",
+    "window_end": "2026-08-12",
+    "user_asof": null
+  },
+  "listing": {
+    "date": "2020-02-26",
+    "source": "akshare fund_etf_hist_em(symbol=515450, adjust=hfq) 首日 2020-02-26（自动确认）"
+  },
+  "data_quality": "data_quality.json"
+}

@@ -1,0 +1,41 @@
+{
+  "hypothesis_id": "v3",
+  "version": "v3",
+  "parent_run": "run-002",
+  "approval": {
+    "gate": "H1",
+    "status": "approved",
+    "record": "runs/run-002/review/critic_verdict.md 五之附（2026-11-09）"
+  },
+  "rule": {
+    "type": "temp_threshold_with_ma_trend_filter",
+    "threshold": 85.0,
+    "exit_condition": "temp[t] > threshold OR (ma_available[t] AND close[t] < ma[t]) → 目标清仓",
+    "entry_condition": "temp[t] <= threshold AND (NOT ma_available[t] OR close[t] >= ma[t]) → 目标满仓",
+    "ma_period": 200,
+    "ma_source": "hfq_close",
+    "ma_min_periods": 200,
+    "ma_unavailable_phase": "均线不足 200 日的前 199 个交易日（2020-02-26 ~ 2020-12-16），仅温度计条件生效",
+    "exec_lag_days": 1,
+    "enter_at_start": true,
+    "enter_at_start_note": "起点温度 6.82 ≤85，处于无均线期，按温度计条件立即满仓"
+  },
+  "sensitivity": {
+    "swept": "threshold ±5（80/82.5/85/87.5/90）",
+    "fixed": "ma_period=200 按用户指定，不扫描"
+  },
+  "cost": {
+    "commission_bps": 3,
+    "min_yuan": 0,
+    "stamp_tax_bps": 0,
+    "slippage_bps": 0
+  },
+  "capital": 1000000,
+  "rationale": "v3 结构变更（task.md 预案③，H1 已批准）：在温度计逃顶基础上叠加 200 日均线趋势过滤防熊。设计依据：(1) 2022 慢熊温度计最高仅 61.1，逃顶条件全程未触发，而收盘跌破 MA200 自 2022-03-09 起持续 146 天——趋势过滤恰好覆盖温度计的能力盲区；(2) 回撤峰值 2022-02-11 早于首次破线日，预期只能部分削减回撤（2 月上旬至 3 月上旬跌幅仍须吃下），第 2 条是否达标由回测裁决；(3) 双确认再入场（温度≤85 且收复均线）天然抑制 v2 中观察到的阈值边界 whipsaw；(4) 已知代价：急反弹中温度未冷却或价格未收复均线时仓位恢复滞后，属设计内权衡。",
+  "design_properties": [
+    "双确认状态机：任一条件触发即离场，两条件均解除才回场，无中间仓位",
+    "均线窗口 min_periods=200：前 199 日 ma_available=false，仅温度计生效（用户建议，采纳）",
+    "均线用同一 hfq 收盘价序列计算，与回测价格同口径",
+    "敏感性只扫阈值，均线周期固定，符合用户指定"
+  ]
+}

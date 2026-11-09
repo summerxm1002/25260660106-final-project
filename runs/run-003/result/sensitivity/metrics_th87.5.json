@@ -1,0 +1,18 @@
+{
+  "threshold": 87.5,
+  "strategy": {
+    "total_return": 0.550924,
+    "annual_return": 0.073121,
+    "max_drawdown": -0.190188,
+    "sharpe": 0.6566,
+    "n_days": 1566,
+    "n_trades": 72
+  },
+  "baseline": {
+    "total_return": 0.851107,
+    "annual_return": 0.104167,
+    "max_drawdown": -0.138702,
+    "sharpe": 0.8063,
+    "n_days": 1566
+  }
+}

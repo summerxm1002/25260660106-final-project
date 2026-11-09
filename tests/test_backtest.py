@@ -27,6 +27,35 @@ def test_targets_binary_threshold_boundary():
     assert generate_targets([50.0, 90.0, 85.0001, 85.0], 85.0) == [1, 0, 0, 1]
 
 
+# ---- generate_targets_ma（v3 双确认） ---------------------------------------
+
+from src.workflow.backtest import generate_targets_ma  # noqa: E402
+
+
+def test_ma_phase_requires_both_conditions():
+    temp = [50.0, 50.0, 50.0, 50.0]
+    close = [110.0, 90.0, 110.0, 90.0]
+    ma = [100.0, 100.0, 100.0, 100.0]
+    # 温度达标但跌破均线 → 清仓；收复均线 → 满仓
+    assert generate_targets_ma(temp, close, ma, 85.0) == [1, 0, 1, 0]
+
+
+def test_ma_phase_temp_hot_overrides_above_ma():
+    temp = [90.0, 50.0]
+    close = [110.0, 110.0]
+    ma = [100.0, 100.0]
+    # 均线上方但温度 >85 → 清仓（逃顶条件独立生效）
+    assert generate_targets_ma(temp, close, ma, 85.0) == [0, 1]
+
+
+def test_nan_ma_phase_temp_only():
+    temp = [50.0, 90.0]
+    close = [100.0, 100.0]
+    ma = [float("nan"), float("nan")]
+    # 均线未形成（上市前 199 日）：仅温度计条件
+    assert generate_targets_ma(temp, close, ma, 85.0) == [1, 0]
+
+
 # ---- simulate：t 判定 → t+1 收盘执行 ----------------------------------------
 
 def test_exec_lag_one_day():

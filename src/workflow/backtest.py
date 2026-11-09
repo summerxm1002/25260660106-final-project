@@ -38,6 +38,19 @@ def generate_targets(temp: list[float], threshold: float,
     return [0 if (t > threshold) else 1 for t in temp]
 
 
+def generate_targets_ma(temp: list[float], close: list[float],
+                        ma: list[float], threshold: float) -> list[int]:
+    """v3 双确认：均线可计算时，温度 ≤ 阈值 且 收盘 ≥ 均线 → 满仓，否则清仓；
+    均线不足 min_periods 的日期（NaN）仅温度计条件生效。"""
+    targets = []
+    for t, c, m in zip(temp, close, ma):
+        if np.isnan(m):
+            targets.append(0 if t > threshold else 1)
+        else:
+            targets.append(1 if (t <= threshold and c >= m) else 0)
+    return targets
+
+
 def simulate(dates, closes, targets, commission: float, enter_at_start: bool = True) -> pd.DataFrame:
     """t 日判定 → t+1 收盘执行的权益模拟。
 
@@ -158,9 +171,27 @@ def run_backtest(run_dir: Path, threshold: float | None = None) -> dict:
     manifest = verify_snapshot(data_dir)
     df, dropped = load_window(data_dir, manifest)
 
-    targets = generate_targets(df["temp"].tolist(), th, enter_at_start)
-    sim = simulate(df["date"].tolist(), df["close"].to_numpy(float),
-                   targets, commission, enter_at_start)
+    rule_type = hypothesis["rule"]["type"]
+    closes = df["close"].to_numpy(float)
+    if rule_type == "temp_threshold_with_ma_trend_filter":
+        ma_period = int(hypothesis["rule"]["ma_period"])
+        ma_min = int(hypothesis["rule"].get("ma_min_periods", ma_period))
+        ma = df["close"].rolling(ma_period, min_periods=ma_min).mean().to_numpy()
+        make_targets = lambda th: generate_targets_ma(
+            df["temp"].tolist(), closes, ma, th)
+        rule_desc = (f"温度计>{th:g} 或 收盘<MA{ma_period} 任一触发离场；"
+                     f"温度≤{th:g} 且收复 MA{ma_period} 双确认回场；"
+                     f"均线前 {ma_min - 1} 日仅温度计生效")
+    elif rule_type == "single_threshold":
+        make_targets = lambda th: generate_targets(df["temp"].tolist(), th,
+                                                   enter_at_start)
+        rule_desc = f"单阈值二元择时：>{th:g} 清仓，≤{th:g} 满仓"
+    else:
+        raise ValueError(f"未知规则类型: {rule_type}")
+
+    targets = make_targets(th)
+    sim = simulate(df["date"].tolist(), closes, targets, commission,
+                   enter_at_start)
     trades = extract_trades(sim, commission)
     sm = compute_metrics(sim["strategy_equity"], sim["strategy_ret"])
     bm = compute_metrics(sim["baseline_equity"],
@@ -172,9 +203,9 @@ def run_backtest(run_dir: Path, threshold: float | None = None) -> dict:
     sens = {}
     for step in SENSITIVITY_STEPS:
         th_s = th + step
-        t_s = generate_targets(df["temp"].tolist(), th_s, enter_at_start)
-        s_s = simulate(df["date"].tolist(), df["close"].to_numpy(float),
-                       t_s, commission, enter_at_start)
+        t_s = make_targets(th_s)
+        s_s = simulate(df["date"].tolist(), closes, t_s, commission,
+                       enter_at_start)
         tr_s = extract_trades(s_s, commission)
         m_s = compute_metrics(s_s["strategy_equity"], s_s["strategy_ret"])
         m_s["n_trades"] = int(len(tr_s))
@@ -203,8 +234,9 @@ def run_backtest(run_dir: Path, threshold: float | None = None) -> dict:
         "window": {k: manifest["as_of"][k] for k in
                    ("window_start", "window_end")},
         "convention": {
+            "rule": rule_desc,
             "execution": "t 日收盘判定，t+1 收盘执行；起点按信号立即建仓",
-            "price": "后复权收盘价（hfq），分红已计入",
+            "price": "后复权收盘价（hfq），分红已计入；均线同源同口径",
             "annualization": f"{TRADING_DAYS} 交易日；夏普 rf=0，日频年化",
             "cost": f"佣金单边 {hypothesis['cost']['commission_bps']}bp，双边计提，无最低/无印花税/无滑点",
             "position_sizing": "权益比例记账（等效全进全出，未按 100 股整手取整）",

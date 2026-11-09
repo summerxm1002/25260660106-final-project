@@ -1,0 +1,93 @@
+{
+  "run_id": "run-003",
+  "hypothesis_id": "v3",
+  "threshold": 85.0,
+  "window": {
+    "window_start": "2020-02-26",
+    "window_end": "2026-08-12"
+  },
+  "convention": {
+    "rule": "温度计>85 或 收盘<MA200 任一触发离场；温度≤85 且收复 MA200 双确认回场；均线前 199 日仅温度计生效",
+    "execution": "t 日收盘判定，t+1 收盘执行；起点按信号立即建仓",
+    "price": "后复权收盘价（hfq），分红已计入；均线同源同口径",
+    "annualization": "252 交易日；夏普 rf=0，日频年化",
+    "cost": "佣金单边 3bp，双边计提，无最低/无印花税/无滑点",
+    "position_sizing": "权益比例记账（等效全进全出，未按 100 股整手取整）",
+    "calendar_alignment": "按信号日历内连接：无当日信号的行情日剔除不代判（本轮剔除 2 日: 2026-03-31, 2026-04-08）"
+  },
+  "strategy": {
+    "total_return": 0.481821,
+    "annual_return": 0.065279,
+    "max_drawdown": -0.190188,
+    "sharpe": 0.6,
+    "n_days": 1566,
+    "n_trades": 74,
+    "cost_total": 0.0222
+  },
+  "baseline": {
+    "total_return": 0.851107,
+    "annual_return": 0.104167,
+    "max_drawdown": -0.138702,
+    "sharpe": 0.8063,
+    "n_days": 1566
+  },
+  "acceptance": {
+    "annual_threshold": 0.109375,
+    "annual_actual": 0.065279,
+    "mdd_limit": -0.097091,
+    "mdd_actual": -0.190188,
+    "sharpe_threshold": 0.9676,
+    "sharpe_actual": 0.6,
+    "n_trades_min": 10,
+    "n_trades_actual": 74,
+    "sensitivity_thresholds": [
+      80.0,
+      82.5,
+      85.0,
+      87.5,
+      90.0
+    ]
+  },
+  "sensitivity": {
+    "80.0": {
+      "total_return": 0.510039,
+      "annual_return": 0.068518,
+      "max_drawdown": -0.190188,
+      "sharpe": 0.6332,
+      "n_days": 1566,
+      "n_trades": 82
+    },
+    "82.5": {
+      "total_return": 0.447592,
+      "annual_return": 0.06128,
+      "max_drawdown": -0.190188,
+      "sharpe": 0.572,
+      "n_days": 1566,
+      "n_trades": 74
+    },
+    "85.0": {
+      "total_return": 0.481821,
+      "annual_return": 0.065279,
+      "max_drawdown": -0.190188,
+      "sharpe": 0.6,
+      "n_days": 1566,
+      "n_trades": 74
+    },
+    "87.5": {
+      "total_return": 0.550924,
+      "annual_return": 0.073121,
+      "max_drawdown": -0.190188,
+      "sharpe": 0.6566,
+      "n_days": 1566,
+      "n_trades": 72
+    },
+    "90.0": {
+      "total_return": 0.54043,
+      "annual_return": 0.071949,
+      "max_drawdown": -0.190188,
+      "sharpe": 0.6451,
+      "n_days": 1566,
+      "n_trades": 74
+    }
+  }
+}
