@@ -2,7 +2,7 @@
 
 > 课程：金融人工智能编程 2026 秋 · 期末作业
 > 作者：25级FMBA 邢敏 · 学号 25260660106
-> 代码仓库：https://github.com/summerxm1002/25260660106-final-project （私有）
+> 代码仓库：https://github.com/summerxm1002/25260660106-final-project （公开）
 
 ## 任务概述
 
