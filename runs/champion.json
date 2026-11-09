@@ -1,0 +1,19 @@
+{
+  "champion_run": "run-002",
+  "hypothesis_id": "v2",
+  "rule": "单阈值二元择时，阈值 80，t 判定 t+1 收盘执行",
+  "since": "2026-11-09",
+  "final_verdict": "有条件通过（4/5）：第 1/3/4/5 条达标，第 2 条最大回撤未达标（-13.87%，与基线相同）",
+  "h2_record": "runs/run-003/review/critic_verdict.md 六之附（2026-11-09）",
+  "rejected": [
+    {
+      "run": "run-003",
+      "hypothesis_id": "v3",
+      "reason": "趋势过滤在低波均值回复品种上方向性有害：2022 年 -14.6% vs 基线 -3.2%，同阈值 80 对照年化 -5.7pp、回撤恶化 5.1pp",
+      "monotonicity_constraint": "v3 核心指标劣于 champion，按 DESIGN §4.4 由 Critic 直接拒绝，champion 指针不回指"
+    }
+  ],
+  "budget_used": "3/5 轮（v1 首轮 + v2/v3 修订轮），余 2 轮按 H2 裁决主动放弃",
+  "metrics_ref": "runs/run-002/result/metrics.json",
+  "window": {"start": "2020-02-26", "end": "2026-08-12"}
+}
